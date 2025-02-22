@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ball Detector</title>
+    <style>
+        body { width: 200px; font-family: Arial, sans-serif; text-align: center; }
+        button { margin-top: 10px; padding: 10px; width: 100%; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <h2>اضغط على الزر لرؤية الكرات</h2>
-    <button id="detect">كشف الكرات</button>
+    <h3>كشف الكرات</h3>
+    <button id="startDetection">ابدأ الكشف</button>
     <script>
-        document.getElementById("detect").addEventListener("click", () => {
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                chrome.scripting.executeScript({
-                    target: { tabId: tabs[0].id },
-                    function: detectBalls
-                });
-            });
+        document.getElementById("startDetection").addEventListener("click", () => {
+            chrome.scripting.executeScript({ target: { allFrames: true }, files: ["content.js"] });
         });
     </script>
 </body>
