@@ -3,33 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كشف الكرة</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            width: 200px;
-            padding: 10px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Ball Detector</title>
 </head>
 <body>
-    <h2>🔍 كشف الكرة</h2>
-    <button id="start">ابدأ الكشف</button>
+    <h2>اضغط على الزر لرؤية الكرات</h2>
+    <button id="detect">كشف الكرات</button>
     <script>
-        document.getElementById("start").addEventListener("click", () => {
+        document.getElementById("detect").addEventListener("click", () => {
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 chrome.scripting.executeScript({
                     target: { tabId: tabs[0].id },
-                    function: () => alert("تم تفعيل كاشف الكرة!")
+                    function: detectBalls
                 });
             });
         });
