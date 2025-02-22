@@ -1,43 +1,24 @@
 function detectBalls() {
-    let canvas = document.querySelector("canvas");
-    if (!canvas) return;
+    let balls = document.querySelectorAll("div, img"); // البحث عن الكرات
+    document.querySelectorAll(".ball-marker").forEach(e => e.remove()); // إزالة العلامات القديمة
 
-    let ctx = canvas.getContext("2d");
-    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let pixels = imgData.data;
-    
-    let ballColor = { r: 255, g: 0, b: 0 }; // لون الكرات المتوقع (عدّل حسب الحاجة)
-    let ballPositions = [];
+    balls.forEach(ball => {
+        let rect = ball.getBoundingClientRect();
 
-    for (let y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < canvas.width; x++) {
-            let index = (y * canvas.width + x) * 4;
-            let r = pixels[index], g = pixels[index + 1], b = pixels[index + 2];
-
-            if (Math.abs(r - ballColor.r) < 50 && Math.abs(g - ballColor.g) < 50 && Math.abs(b - ballColor.b) < 50) {
-                ballPositions.push({ x, y });
-            }
+        if (rect.width > 10 && rect.height > 10) {
+            let marker = document.createElement("div");
+            marker.classList.add("ball-marker");
+            marker.style.position = "absolute";
+            marker.style.left = `${rect.left + window.scrollX}px`;
+            marker.style.top = `${rect.top + window.scrollY - 20}px`;
+            marker.style.width = "20px";
+            marker.style.height = "20px";
+            marker.style.backgroundColor = "red";
+            marker.style.borderRadius = "50%";
+            marker.style.border = "2px solid white";
+            marker.style.zIndex = "9999";
+            document.body.appendChild(marker);
         }
-    }
-
-    drawArrows(ballPositions);
-}
-
-function drawArrows(positions) {
-    document.querySelectorAll(".ball-arrow").forEach(e => e.remove());
-
-    positions.forEach(pos => {
-        let arrow = document.createElement("div");
-        arrow.classList.add("ball-arrow");
-        arrow.style.position = "absolute";
-        arrow.style.left = `${pos.x}px`;
-        arrow.style.top = `${pos.y - 30}px`;
-        arrow.style.width = "20px";
-        arrow.style.height = "20px";
-        arrow.style.backgroundColor = "red";
-        arrow.style.borderRadius = "50%";
-        arrow.style.zIndex = "9999";
-        document.body.appendChild(arrow);
     });
 }
 
