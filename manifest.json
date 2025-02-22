@@ -1,54 +1,25 @@
-function detectBall() {
-    const canvas = document.querySelector("canvas"); // العثور على عنصر الـ Canvas
-    if (!canvas) {
-        console.log("❌ لم يتم العثور على الـ Canvas");
-        return;
+{
+  "manifest_version": 3,
+  "name": "Ball Detector",
+  "version": "1.0",
+  "description": "إظهار مكان الكرة في لعبة Thimbles",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["*://*.melbet.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.melbet.com/*"],
+      "js": ["content.js"]
     }
-
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-
-    let ballPositions = [];
-
-    // البحث عن اللون الذي يمثل الكرة
-    for (let i = 0; i < pixels.length; i += 4) {
-        let r = pixels[i];
-        let g = pixels[i + 1];
-        let b = pixels[i + 2];
-
-        // مثال: افترضنا أن الكرة لونها أحمر (قم بتعديله حسب لون الكرة الفعلي)
-        if (r === 255 && g === 0 && b === 0) {  
-            let x = (i / 4) % canvas.width;
-            let y = Math.floor(i / 4 / canvas.width);
-            ballPositions.push({ x, y });
-        }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
     }
-
-    // إذا وُجدت كرات، نضع سهامًا فوق الأكواب التي تحتويها
-    if (ballPositions.length > 0) {
-        console.log("✅ تم العثور على الكرات:", ballPositions);
-        highlightCups(ballPositions);
-    } else {
-        console.log("⚠️ لم يتم العثور على الكرة");
-    }
+  }
 }
-
-function highlightCups(positions) {
-    positions.forEach(({ x, y }) => {
-        const arrow = document.createElement("div");
-        arrow.innerHTML = "⬇️"; // سهم للأسفل
-        arrow.style.position = "absolute";
-        arrow.style.left = `${x}px`;
-        arrow.style.top = `${y - 50}px`; // وضع السهم فوق الكأس
-        arrow.style.fontSize = "30px";
-        arrow.style.color = "red";
-        arrow.style.zIndex = "9999";
-        arrow.style.pointerEvents = "none"; // منع التفاعل مع السهم
-
-        document.body.appendChild(arrow);
-    });
-}
-
-// تشغيل الكشف كل نصف ثانية أثناء اللعب
-setInterval(detectBall, 500);
