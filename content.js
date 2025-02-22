@@ -1,45 +1,34 @@
 (function() {
-    console.log("Ball Detector Loaded");
+    console.log("🔍 Ball Detector Loaded...");
 
-    function findCanvas() {
-        let canvasList = document.querySelectorAll("canvas");
-        for (let canvas of canvasList) {
-            let gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-            if (gl) {
-                console.log("✅ تم العثور على WebGL Canvas");
-                observeWebGL(canvas, gl);
-                return;
-            }
+    function detectBall() {
+        let canvas = document.querySelector("canvas");
+        if (!canvas) {
+            console.log("❌ لم يتم العثور على الـ Canvas!");
+            return;
         }
-        console.log("❌ لم يتم العثور على WebGL Canvas!");
-    }
 
-    function observeWebGL(canvas, gl) {
-        let originalDrawArrays = gl.drawArrays;
-        gl.drawArrays = function(...args) {
-            console.log("🔍 يتم تحديث الـ WebGL - قد تحتوي هذه الإطارات على الكرة!");
-            originalDrawArrays.apply(gl, args);
-            highlightBall(canvas);
-        };
-    }
-
-    function highlightBall(canvas) {
         let ctx = canvas.getContext("2d");
-        if (!ctx) return;
+        if (!ctx) {
+            console.log("❌ فشل الحصول على سياق الرسم (context)!");
+            return;
+        }
 
         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let pixels = imgData.data;
 
-        let ballColor = { r: 255, g: 0, b: 0 }; // تغيير لون الكرة إذا لزم الأمر
+        // 🏀 تحديد لون الكرة (يمكنك تغييره بناءً على لون الكرة في اللعبة)
+        let ballColor = { r: 255, g: 0, b: 0 };
+
         let detectedPositions = [];
 
         for (let i = 0; i < pixels.length; i += 4) {
             let r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
 
-            if (Math.abs(r - ballColor.r) < 30 && 
-                Math.abs(g - ballColor.g) < 30 && 
-                Math.abs(b - ballColor.b) < 30) {
-                
+            if (Math.abs(r - ballColor.r) < 40 &&
+                Math.abs(g - ballColor.g) < 40 &&
+                Math.abs(b - ballColor.b) < 40) {
+
                 let x = (i / 4) % canvas.width;
                 let y = Math.floor((i / 4) / canvas.width);
                 detectedPositions.push({ x, y });
@@ -62,4 +51,18 @@
                 marker.style.backgroundColor = "rgba(0, 255, 0, 0.7)";
                 marker.style.borderRadius = "50%";
                 marker.style.zIndex = "9999";
-         
+                marker.style.pointerEvents = "none";
+                document.body.appendChild(marker);
+            }
+
+            marker.style.left = `${canvas.offsetLeft + minX}px`;
+            marker.style.top = `${canvas.offsetTop + minY}px`;
+
+            console.log(`🎯 الكرة موجودة عند: (${minX}, ${minY})`);
+        } else {
+            console.log("❌ لم يتم العثور على الكرة!");
+        }
+    }
+
+    setInterval(detectBall, 100);
+})();
