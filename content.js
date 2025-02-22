@@ -1,20 +1,36 @@
 (function() {
-    console.log("Ball Detector Script Loaded");
+    console.log("Ball Detector Loaded");
 
-    function analyzeCanvas() {
-        let canvas = document.querySelector("canvas");
-        if (!canvas) {
-            console.log("❌ لم يتم العثور على الـ Canvas!");
-            return;
+    function findCanvas() {
+        let canvasList = document.querySelectorAll("canvas");
+        for (let canvas of canvasList) {
+            let gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (gl) {
+                console.log("✅ تم العثور على WebGL Canvas");
+                observeWebGL(canvas, gl);
+                return;
+            }
         }
+        console.log("❌ لم يتم العثور على WebGL Canvas!");
+    }
 
+    function observeWebGL(canvas, gl) {
+        let originalDrawArrays = gl.drawArrays;
+        gl.drawArrays = function(...args) {
+            console.log("🔍 يتم تحديث الـ WebGL - قد تحتوي هذه الإطارات على الكرة!");
+            originalDrawArrays.apply(gl, args);
+            highlightBall(canvas);
+        };
+    }
+
+    function highlightBall(canvas) {
         let ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
         let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let pixels = imgData.data;
 
-        // 🔴 لون الكرة (عدّله إذا كان لون الكرة مختلفاً في اللعبة)
-        let ballColor = { r: 255, g: 0, b: 0 };
-
+        let ballColor = { r: 255, g: 0, b: 0 }; // تغيير لون الكرة إذا لزم الأمر
         let detectedPositions = [];
 
         for (let i = 0; i < pixels.length; i += 4) {
@@ -36,7 +52,6 @@
             let minX = Math.min(...detectedPositions.map(p => p.x));
             let minY = Math.min(...detectedPositions.map(p => p.y));
 
-            // 🔵 إضافة مؤشر لموقع الكرة
             let marker = document.getElementById("ball-marker");
             if (!marker) {
                 marker = document.createElement("div");
@@ -47,19 +62,4 @@
                 marker.style.backgroundColor = "rgba(0, 255, 0, 0.7)";
                 marker.style.borderRadius = "50%";
                 marker.style.zIndex = "9999";
-                marker.style.pointerEvents = "none";
-                document.body.appendChild(marker);
-            }
-
-            marker.style.left = `${canvas.offsetLeft + minX}px`;
-            marker.style.top = `${canvas.offsetTop + minY}px`;
-
-            console.log(`✅ الكرة موجودة عند: (${minX}, ${minY})`);
-        } else {
-            console.log("❌ لم يتم العثور على الكرة!");
-        }
-    }
-
-    setInterval(analyzeCanvas, 500); // 🔄 تحديث كل نصف ثانية
-
-})();
+         
