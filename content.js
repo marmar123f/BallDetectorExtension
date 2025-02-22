@@ -1,6 +1,6 @@
 function detectCorrectCups() {
-    // البحث عن الأكواب الأساسية في اللعبة (قد تحتاج إلى تعديل هذا بناءً على فحص العنصر)
-    let cups = document.querySelectorAll("div.cup"); // استبدل `div.cup` باسم الكلاس الصحيح للأكواب
+    // البحث عن الأكواب الأساسية في اللعبة
+    let cups = document.querySelectorAll("div.cup"); // تأكد من أن "cup" هو الكلاس الصحيح للأكواب
 
     if (cups.length !== 3) {
         console.log("لم يتم العثور على 3 أكواب، تحقق من الكود.");
@@ -11,15 +11,15 @@ function detectCorrectCups() {
     document.querySelectorAll(".ball-marker").forEach(e => e.remove());
 
     cups.forEach(cup => {
-        let ball = cup.querySelector("img.ball"); // استبدل `img.ball` باسم العنصر الصحيح للكرة داخل الكوب
+        let ball = cup.querySelector("div.ball-marker"); // التحقق من وجود الكرة داخل الكوب
 
         if (ball) { // إذا كان هناك كرة داخل الكوب
             let rect = cup.getBoundingClientRect();
 
             let marker = document.createElement("div");
-            marker.classList.add("ball-marker");
+            marker.classList.add("ball-indicator");
             marker.style.position = "absolute";
-            marker.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+            marker.style.left = `${rect.left + window.scrollX + rect.width / 2 - 10}px`;
             marker.style.top = `${rect.top + window.scrollY - 20}px`;
             marker.style.width = "20px";
             marker.style.height = "20px";
