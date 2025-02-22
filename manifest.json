@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Ball Detector for Thimbles",
+  "name": "Ball Detector",
   "version": "1.0",
-  "description": "Detects the ball position in Thimbles game",
+  "description": "كشف مكان الكرة أثناء اللعب",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": ["*://melbet.com/*"],
   "background": {
@@ -11,11 +11,15 @@
   "content_scripts": [
     {
       "matches": ["*://melbet.com/*"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
+      "js": ["content.js"]
     }
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
   }
 }
