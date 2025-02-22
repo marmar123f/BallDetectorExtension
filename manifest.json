@@ -15,8 +15,7 @@
       "run_at": "document_idle"
     }
   ],
- "action": {
-  "default_popup": "popup.html"
-}
+  "action": {
+    "default_popup": "popup.html"
   }
 }
