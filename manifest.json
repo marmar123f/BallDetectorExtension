@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Ball Detector",
   "version": "1.0",
-  "description": "إظهار مكان الكرة في لعبة Thimbles",
+  "description": "كشف أماكن الكرات في لعبة Thimbles",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": ["*://*.melbet.com/*"],
   "background": {
