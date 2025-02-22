@@ -1,54 +1,44 @@
-function findBall() {
-    const canvas = document.querySelector("canvas"); // العثور على عنصر الـ Canvas
-    if (!canvas) {
-        console.log("❌ لم يتم العثور على الـ Canvas");
-        return;
-    }
+function detectBalls() {
+    let canvas = document.querySelector("canvas");
+    if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-
+    let ctx = canvas.getContext("2d");
+    let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let pixels = imgData.data;
+    
+    let ballColor = { r: 255, g: 0, b: 0 }; // لون الكرات المتوقع (عدّل حسب الحاجة)
     let ballPositions = [];
 
-    // البحث عن اللون المميز للكرة
-    for (let i = 0; i < pixels.length; i += 4) {
-        let r = pixels[i];
-        let g = pixels[i + 1];
-        let b = pixels[i + 2];
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            let index = (y * canvas.width + x) * 4;
+            let r = pixels[index], g = pixels[index + 1], b = pixels[index + 2];
 
-        if (r === 255 && g === 0 && b === 0) { // مثال: إذا كانت الكرة حمراء
-            let x = (i / 4) % canvas.width;
-            let y = Math.floor(i / 4 / canvas.width);
-            ballPositions.push({ x, y });
+            if (Math.abs(r - ballColor.r) < 50 && Math.abs(g - ballColor.g) < 50 && Math.abs(b - ballColor.b) < 50) {
+                ballPositions.push({ x, y });
+            }
         }
     }
 
-    if (ballPositions.length > 0) {
-        console.log("✅ تم العثور على الكرة:", ballPositions);
-        highlightBall(ballPositions);
-    } else {
-        console.log("⚠️ لم يتم العثور على الكرة");
-    }
+    drawArrows(ballPositions);
 }
 
-function highlightBall(positions) {
-    positions.forEach(({ x, y }) => {
-        const marker = document.createElement("div");
-        marker.style.position = "absolute";
-        marker.style.left = `${x}px`;
-        marker.style.top = `${y}px`;
-        marker.style.width = "20px";
-        marker.style.height = "20px";
-        marker.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
-        marker.style.border = "2px solid white";
-        marker.style.borderRadius = "50%";
-        marker.style.pointerEvents = "none";
-        marker.style.zIndex = "9999";
+function drawArrows(positions) {
+    document.querySelectorAll(".ball-arrow").forEach(e => e.remove());
 
-        document.body.appendChild(marker);
+    positions.forEach(pos => {
+        let arrow = document.createElement("div");
+        arrow.classList.add("ball-arrow");
+        arrow.style.position = "absolute";
+        arrow.style.left = `${pos.x}px`;
+        arrow.style.top = `${pos.y - 30}px`;
+        arrow.style.width = "20px";
+        arrow.style.height = "20px";
+        arrow.style.backgroundColor = "red";
+        arrow.style.borderRadius = "50%";
+        arrow.style.zIndex = "9999";
+        document.body.appendChild(arrow);
     });
 }
 
-// تشغيل البحث بعد تحميل الصفحة
-setInterval(findBall, 500);
+setInterval(detectBalls, 500);
